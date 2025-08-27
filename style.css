@@ -1,0 +1,790 @@
+@import url('https://fonts.cdnfonts.com/css/nero');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body,
+html {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+.section {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bg {
+  position: absolute;
+  inset: 0;
+  background: url("Hero Section/Background.jpg") no-repeat center center/cover;
+  transform: scale(1.1);
+  z-index: -2;
+}
+
+/* ADD THIS CSS TO CREATE A DARK OVERLAY */
+.bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6); /* Adjust the 0.6 value to control darkness (0.0 to 1.0) */
+}
+
+/* NEW RULE FOR THE CANVAS */
+#cometCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1; /* Place it between the bg image (-2) and the content (z-index 6+) */
+  pointer-events: none; /* Allows clicks to pass through to elements behind it */
+}
+
+/* Title */
+.title {
+  font-family: 'Nero', sans-serif;
+  font-size: 10vw;
+  color: white;
+  text-align: center;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out;
+  transition-delay: 0.8s;
+}
+
+/* Floating animations */
+@keyframes float-big {
+  0% { transform: translateY(0) rotate(30deg); }
+  50% { transform: translateY(-25px) rotate(30deg); }
+  100% { transform: translateY(0) rotate(30deg); }
+}
+
+@keyframes float-big-right {
+  0% { transform: translateY(0) rotate(-30deg); }
+  50% { transform: translateY(-25px) rotate(-30deg); }
+  100% { transform: translateY(0) rotate(-30deg); }
+}
+
+@keyframes float {
+  0% { transform: translateY(0) rotate(-5deg); }
+  50% { transform: translateY(-15px) rotate(-5deg); }
+  100% { transform: translateY(0) rotate(-5deg); }
+}
+@keyframes float2 {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes float3 {
+  0% { transform: translateY(0) rotate(17deg); }
+  50% { transform: translateY(-15px) rotate(17deg); }
+  100% { transform: translateY(0) rotate(17deg); }
+}
+
+
+@keyframes float4{
+  0% { transform: translateX(0) rotate(-120deg); }
+  50% { transform: translateX(-30px) rotate(-120deg); }
+  100% { transform: translateX(0) rotate(-120deg); }
+}
+/* Astroid Left */
+.astroid-left {
+  position: absolute;
+  bottom: -15%;
+  left: -15%;
+  width: 1200px;
+  max-width: 1000vw;
+  transform: rotate(30deg);
+  animation: float-big 6s ease-in-out infinite;
+}
+
+/* Astroid Right */
+.astroid-right {
+  position: absolute;
+  bottom: -15%;
+  right: -15%;
+  width: 1200px;
+  max-width: 1000vw;
+  transform: rotate(-30deg);
+  animation: float-big-right 6s ease-in-out infinite;
+}
+
+/* Astronaut */
+.astronaut {
+  position: absolute;
+  bottom: -4%;
+  left: -4%;
+  transform: rotate(70deg);
+  width: 600px;
+  max-width: 100vw;
+  animation: float 4s ease-in-out infinite;
+}
+
+/* Astroid-1 */
+.astroid1 {
+  position: absolute;
+  top: 40%;
+  left: 60%;
+  width: 350px;
+  max-width: 1000vw;
+  animation: float2 5s ease-in-out infinite;
+}
+
+/* --- Responsive Tweaks --- */
+@media (max-width: 1024px) {
+  .title { 
+    font-size: 12vw; 
+  }
+  .astronaut { 
+    width: 70vw; bottom: 35%; left: -20%; 
+  }
+  .astroid1 { 
+    width: 40vw; top: 55%; left: 65%; }
+  .astroid-left { 
+    width: 80vw; bottom: -5%; right: -50%; 
+  }
+  .astroid-right { 
+    width: 80vw; bottom: 5%; right: -50%; 
+  }
+}
+
+@media (max-width: 600px) {
+  .title { 
+    font-size: 16vw;
+  }
+  .astronaut { 
+    width: 76vw; bottom: -4%; left: -15%; 
+  }
+  .astroid1 { 
+    width: 50vw; top: 20%; left: 55%; 
+  }
+  .astroid-left { 
+    width: 0; bottom: 2%; left: -30%; 
+  }
+  .astroid-right { 
+    width: 120vw; bottom: -10%; right: -10%;
+
+  }
+}
+
+/* ---------- Animation Wrappers for Scroll ---------- */
+.left-group,
+.right-group {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* Default slow transition for initial load */
+  transition: transform 1.5s ease-in-out, opacity 1.5s ease-in-out;
+  will-change: transform, opacity;
+  z-index: 6;
+  opacity: 0;
+}
+
+/* starting off-screen */
+.left-group  { transform: translateX(-120%); }
+.right-group { transform: translateX(120%); }
+
+/* when hero is loaded (on page load / scroll back) */
+.hero.loaded .left-group,
+.hero.loaded .right-group {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+/* THIS NEW RULE MAKES THE RETURN ANIMATION FASTER */
+.hero.loaded:not(.scrolled) .left-group,
+.hero.loaded:not(.scrolled) .right-group {
+    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+}
+
+/* slide out when scrolled to next section */
+.hero.scrolled .left-group  { transform: translateX(-120%); opacity: 0; }
+.hero.scrolled .right-group { transform: translateX(120%);  opacity: 0; }
+
+/* Images stagger (entrance) */
+.hero.loaded .astroid-left  { transition-delay: 0.2s; }
+.hero.loaded .astronaut     { transition-delay: 0.4s; }
+.hero.loaded .astroid-right { transition-delay: 0.6s; }
+.hero.loaded .astroid1      { transition-delay: 0.8s; }
+
+/* Images stagger (exit) */
+.hero.scrolled .astroid-left  { transition-delay: 0.8s; }
+.hero.scrolled .astronaut     { transition-delay: 0.6s; }
+.hero.scrolled .astroid-right { transition-delay: 0.4s; }
+.hero.scrolled .astroid1      { transition-delay: 0.2s; }
+
+/* Title stays simple (no stagger) */
+.hero.loaded .title {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.hero.scrolled .title {
+  opacity: 0;
+  transform: translateY(0);
+}
+
+
+
+
+
+
+
+
+
+/* --- Section Two Styles --- */
+.second {
+  position: relative;
+  background-color: #0d0d0d;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* Use min-height for better flexibility on different screen sizes */
+  min-height: 100vh;
+  /* UPDATED: Removed overflow-y: auto from here */
+  overflow-y: hidden;
+}
+
+#skyCanvas {
+  position: absolute;
+  inset: 0;
+  top: -30%;
+  height: 90%;
+  z-index: 0;
+}
+
+.bg-second {
+  position: absolute;
+  inset: 0;
+  background: url("Dep_Select/background.webp") no-repeat center center/cover;
+  transform: scale(1.1);
+  opacity: 0.8;
+  z-index: 0;
+}
+
+/* Container for scroll-in animation */
+.left-group-2,
+.right-group-2 {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  pointer-events: none;
+  transition: transform 0.4s ease-in-out, opacity 1.5s ease-in-out;
+  will-change: transform, opacity;
+  opacity: 0;
+  z-index: 10;
+}
+
+/* Starting positions off-screen */
+.left-group-2 {
+  left: 0;
+  top: 60%;
+  transform: translateX(-120%);
+}
+
+.right-group-2 {
+  right: -10%;
+  top: 5%;
+  transform: translateX(120%);
+}
+
+/* When the 'second' section is visible, they slide into place */
+.second.loaded .left-group-2,
+.second.loaded .right-group-2 {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+/* NEW: Slide out when scrolling to the next section */
+.second.scrolled-out .left-group-2 {
+  transform: translateX(-120%);
+  opacity: 0;
+}
+
+.second.scrolled-out .right-group-2 {
+  transform: translateX(120%);
+  opacity: 0;
+}
+
+/* Individual element styles and floating animations */
+.astronaut-second {
+  width: 700px;
+  max-width: 200vw;
+  z-index: 10;
+  transform: rotate(20deg);
+  animation: float3 4s ease-in-out infinite;
+}
+
+.comet {
+  width: 400px;
+  max-width: 200vw;
+  z-index: 10;
+  transform: rotate(-120deg);
+  animation: float4 4s ease-in-out infinite;
+}
+
+/* Animation keyframes for floating effect */
+@keyframes float3 {
+  0% { transform: translateY(0) rotate(20deg); }
+  50% { transform: translateY(-15px) rotate(20deg); }
+  100% { transform: translateY(0) rotate(20deg); }
+}
+
+@keyframes float4 {
+  0% { transform: translateY(0) rotate(-120deg); }
+  50% { transform: translateY(-20px) rotate(-120deg); }
+  100% { transform: translateY(0) rotate(-120deg); }
+}
+
+/* New CSS to make grid images visible after side elements arrive */
+.grid-row-1, .grid-row-2 {
+  display: grid;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  /* UPDATED: Increased z-index to be sure it's on top */
+  z-index: 20; 
+  
+  /* Start invisible */
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+}
+
+/* Set the initial grid layouts for larger screens */
+.grid-row-1 {
+  /* UPDATED: Changed from a 4-column grid to a centered flexbox layout to align with grid-row-2 */
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  transition-delay: 0.4s;
+}
+
+/* Removed previous grid-column rule for grid-row-1 a:first-child */
+
+.grid-row-2 {
+  grid-template-columns: repeat(3, 1fr);
+  transition-delay: 0.4s;
+}
+
+/* When the section is "loaded", make the grids visible */
+.second.loaded .grid-row-1, .second.loaded .grid-row-2 {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.grid-item {
+  width: 100%;
+  max-width: 350px;
+  height: auto;
+  transition: transform 0.3s ease, filter 0.3s ease;
+  cursor: pointer;
+  filter: drop-shadow(0 0 10px rgba(7, 7, 7, 0.2));
+  border-radius: 10%;
+}
+
+.grid-item:hover {
+  transform: translateY(-10px) scale(1.05);
+  filter: drop-shadow(0 0 15px rgba(54, 34, 34, 0.5));
+}
+
+/* Responsive adjustments for section 2 */
+@media (max-width: 1024px) {
+  .astronaut-second {
+    width: 150px;
+    /* UPDATED: Adjust left position to not overlap the grid */
+    left: 0;
+  }
+  .comet {
+    width: 200px;
+    /* UPDATED: Adjust right position to not overlap the grid */
+    right: 0;
+  }
+  /* NEW: Style for the single scrollable container */
+  .grid-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    /* UPDATED: Use scroll instead of auto to always show the scrollbar */
+    overflow-y: scroll;
+    max-height: 60vh;
+    padding: 20px 0;
+    width: 90%;
+    margin: 0 auto;
+    /* UPDATED: Removed padding-right as it is no longer needed with custom scrollbars */
+  }
+    
+    /* ADDED: Custom scrollbar styling for the grid container */
+    .grid-container::-webkit-scrollbar {
+        width: 8px;
+    }
+    .grid-container::-webkit-scrollbar-track {
+        background: rgba(192, 91, 8, 0.871);
+        border-radius: 10px;
+    }
+    .grid-container::-webkit-scrollbar-thumb {
+        background-color: #c1b2b2;
+        border-radius: 10px;
+    }
+    .grid-container::-webkit-scrollbar-thumb:hover {
+        background-color: #F59E0B;
+    }
+  
+  /* UPDATED: On mobile, grid-row-1 and grid-row-2 are no longer grids */
+  .grid-row-1,
+  .grid-row-2 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 0;
+    /* ADDED: Added a margin-bottom to create spacing between the two grids */
+    margin-bottom: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  /* NEW: Style for the single scrollable container */
+  .grid-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    /* UPDATED: Use scroll instead of auto to always show the scrollbar */
+    overflow-y: scroll;
+    max-height: 80vh;
+    padding: 20px 0;
+    width: 60%;
+    margin: 0 auto;
+    /* UPDATED: Removed padding-right as it is no longer needed with custom scrollbars */
+  }
+    
+    /* ADDED: Custom scrollbar styling for the grid container */
+    .grid-container::-webkit-scrollbar {
+        width: 8px;
+    }
+    .grid-container::-webkit-scrollbar-track {
+        background: rgba(192, 100, 8, 0.948);
+        border-radius: 10px;
+       
+    }
+    .grid-container::-webkit-scrollbar-thumb {
+        background-color: #c1b2b2;
+        border-radius: 10px;
+      
+    }
+    .grid-container::-webkit-scrollbar-thumb:hover {
+        background-color: #F59E0B;
+       
+    }
+  /* UPDATED: On mobile, grid-row-1 and grid-row-2 are no longer grids */
+  .grid-row-1,
+  .grid-row-2 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 0;
+    /* ADDED: Added a margin-bottom to create spacing between the two grids */
+    margin-bottom: 20px;
+  }
+  .astronaut-second {
+    width: 400px;
+  }
+
+  .comet {
+    width: 300px;
+    
+  }
+
+  .left-group-2 {
+   top: 75%;
+  }
+
+  .right-group-2 {
+    right: -30%;
+    top: 4%;
+  }
+
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* --- Section Three Styles --- */
+.third {
+  position: relative;
+  background-color: #0d0d0d;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.bg-third {
+  position: absolute;
+  inset: 0;
+  background: url("Time/background.webp") no-repeat center center/cover;
+  transform: scale(1.1);
+  opacity: 0.8;
+  z-index: 0;
+}
+
+#thirdCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.content-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.astronaut-third,
+.lines-left,
+.line-right,
+.big-star-top-left,
+.big-star-bottom-right,
+.stone-top-right,
+.stone-bottom-left,
+.saturn,
+.first-event-grid,
+.second-event-grid {
+  position: absolute;
+  /* Add transition for scroll-based animation */
+  transition: transform 1s ease-in-out, opacity 1s ease-in-out;
+  will-change: transform, opacity;
+}
+
+/* --- Initial off-screen positions for Section 3 elements --- */
+.astronaut-third,
+.stone-top-right,
+.stone-bottom-left,
+.saturn {
+  opacity: 0;
+}
+
+.astronaut-third {
+  bottom: 0;
+  left: -10%;
+  width: 500px;
+  animation: float-astronaut-third 5s ease-in-out infinite;
+  transform: translateX(-120%) rotate(10deg); /* Starts off-screen to the left */
+}
+
+.lines-left {
+  top: 60%;
+  left: 25%;
+  width: 70px;
+  transform: translateY(-50%);
+  opacity: 0;
+}
+
+.line-right {
+  top: 9.65%;
+  right: 35%;
+  width: 70px;
+  opacity: 0;
+}
+
+.big-star-top-left {
+  top: 10%;
+  left: 5%;
+  width: 150px;
+
+}
+
+.big-star-bottom-right {
+  bottom: 10%;
+  right: 10%;
+  width: 150px;
+
+}
+
+.stone-top-right {
+  top: -2%;
+  right: -4%;
+  width: 250px;
+  animation: float-astronaut-third 3s ease-in-out infinite;
+  transform: translateY(-120%); /* Starts off-screen to the top */
+}
+
+.stone-bottom-left {
+  bottom: -10%;
+  right: 2%;
+  width: 250px;
+  animation: float-astronaut-third 7s ease-in-out infinite;
+  transform: translateY(120%); /* Starts off-screen to the bottom */
+}
+
+.saturn {
+  top: -15%;
+  left: 35%;
+  width: 500px;
+  transform: translateY(-120%) rotate(30deg); /* Starts off-screen to the top */
+}
+
+/* When the third section is loaded, they all slide in */
+.third.loaded .astronaut-third {
+  transform: translateX(0) rotate(10deg);
+  opacity: 1;
+}
+
+.third.loaded .saturn {
+  transform: translateY(0) rotate(30deg);
+  opacity: 1;
+}
+
+.third.loaded .stone-top-right {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.third.loaded .stone-bottom-left {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* NEW: Staggered animation for lines and grids */
+.third.loaded .lines-left,
+.third.loaded .line-right {
+  opacity: 1;
+  transition-delay: 0.8s;
+}
+
+.third.loaded .first-event-grid,
+.third.loaded .second-event-grid {
+  opacity: 1;
+  transition-delay: 1.2s;
+}
+
+/* Floating Animations (retained from your code) */
+@keyframes float-astronaut-third {
+  0% { transform: translateY(0) rotate(-10deg); }
+  50% { transform: translateY(-15px) rotate(-10deg); }
+  100% { transform: translateY(0) rotate(-10deg);}
+}
+
+
+
+/* --- Grid Styles --- */
+.first-event-grid {
+  position: absolute;
+  top: 61%;
+  left: 28%;
+  transform: translateY(-50%);
+  z-index: 10;
+  color: white;
+  width: 100%;
+  max-width: 500px;
+  background-color: rgba(0, 0, 0, 0);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(51, 28, 28, 0);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 27px;
+  opacity: 0;
+}
+
+.second-event-grid {
+  position: absolute;
+  top: 48.5%;
+  right: 3%;
+  transform: translateY(-50%);
+  z-index: 10;
+  color: #fff;
+  width: 40%;
+  max-width: 500px;
+  background-color: rgba(255, 255, 255, 0);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 27px;
+  opacity: 0;
+}
+
+/* Shared styles for grid items */
+.event-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 8px;
+  padding: 15px;
+  
+  border: 1px solid rgba(255, 255, 255, 0);
+}
+
+.event-name {
+  font-family: sans-serif;
+  font-size: 1vw;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .first-event-grid,
+  .second-event-grid {
+    position: static;
+    transform: none;
+    width: 90%;
+    margin-bottom: 20px;
+  }
+  .content-wrapper {
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+  .event-name {
+    font-size: 2vw;
+  }
+}
+
+@media (max-width: 600px) {
+  .event-name {
+    font-size: 5vw;
+  }
+  .event-time {
+    font-size: 3vw;
+  }
+  .first-event-grid,
+  .second-event-grid {
+    padding: 15px;
+  }
+}
